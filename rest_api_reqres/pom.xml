@@ -6,8 +6,26 @@
   <version>1.0-SNAPSHOT</version>
   <name>Archetype - rest_api_reqres</name>
   <url>http://maven.apache.org</url>
-
+  allure {
+    report {
+          version.set(allureVersion)
+            }
+    adapter {
+          aspectjWeaver.set(true)
+            frameworks {
+              junit5 {
+                adapterVersion.set(allureVersion)
+                }
+              }
+            }
+          }
   <dependencies>
+
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-rest-assured</artifactId>
+      <version>2.29.1</version>
+    </dependency>
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -29,5 +47,17 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>json-schema-validator</artifactId>
+      <version>5.5.5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.36</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 </project>

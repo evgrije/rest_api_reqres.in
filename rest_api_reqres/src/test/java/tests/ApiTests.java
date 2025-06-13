@@ -1,9 +1,14 @@
-import org.junit.jupiter.api.BeforeAll;
+package tests;
+
+import io.qameta.allure.restassured.AllureRestAssured;
+import models.pojo.LoginBodyModel;
+import models.pojo.LoginResponseModel;
 import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApiTests {
 
@@ -29,17 +34,24 @@ public class ApiTests {
 
     @Test
      void logIn(){
-        String body = "{\"email\": \"eve.holt@reqres.in\", \"password\": \"cityslicka\"}";
-        given()
-                .body(body)
+       // String body = "{\"email\": \"eve.holt@reqres.in\", \"password\": \"cityslicka\"}";
+        LoginBodyModel authBody = new LoginBodyModel();
+        authBody.setLogin("eve.holt@reqres.in");
+        authBody.setPassword("cityslicka");
+
+        LoginResponseModel response = given()
+                .filter(new AllureRestAssured())
+                .body(authBody)
                 .contentType(JSON)
 
                 .when()
                 .post("https://reqres.in/api/login")
 
                 .then()
-                .log().body()
-                .body("token", hasValue("QpwL5tke4Pnpja7X4"));
+                    .log().body()
+                    .statusCode(200)
+                .extract().as(LoginResponseModel.class); //запрос мы достаем из него ответ как модель LoginResponseModel
+        assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
 
     }
 
@@ -56,7 +68,8 @@ public class ApiTests {
     void checkSizeDataUsers(){
         given()
                 .when()
-                .get("https://reqres.in/api/users?page=2")
+                .queryParam("page", "2")
+                .get("https://reqres.in/api/users")
                 .then()
                 .body("data.size()", equalTo(6));
 
